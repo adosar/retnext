@@ -18,7 +18,9 @@ class RandomRotate90:
     Examples
     --------
     >>> x = torch.randn(3, 10, 10, 10)
-    >>> _ = RandomRotate90()(x).shape
+    >>> out = RandomRotate90()(x)
+    >>> torch.equal(x, out)
+    False
     """
     def __init__(self):
         self.planes = list(combinations([1, 2, 3], 2))
@@ -41,7 +43,9 @@ class RandomFlip:
     Examples
     --------
     >>> x = torch.randn(3, 10, 10, 10)
-    >>> _ = RandomFlip()(x)
+    >>> out = RandomFlip()(x)
+    >>> torch.equal(x, out)
+    False
     """
     def __call__(self, x):
         dim = torch.randint(1, 4, ()).item()
@@ -56,7 +60,9 @@ class RandomReflect:
     Examples
     --------
     >>> x = torch.randn(3, 10, 10, 10)
-    >>> _ = RandomReflect()(x)
+    >>> out = RandomReflect()(x)
+    >>> torch.equal(x, out)
+    False
     """
     def __init__(self):
         self.planes = list(combinations([1, 2, 3], 2))
@@ -78,7 +84,9 @@ class RandomRoll:
     Examples
     --------
     >>> x = torch.randn(3, 10, 10, 10)
-    >>> _ = RandomRoll([2, 4, 6])(x)
+    >>> out = RandomRoll([2, 4, 6])(x)
+    >>> torch.equal(x, out)
+    False
     """
     def __init__(self, shift_values: list[int]):
         self.shift_values = shift_values
