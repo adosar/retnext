@@ -29,7 +29,7 @@ class RetNeXt(nn.Module):
     Examples
     --------
     >>> x = torch.randn(8, 3, 32, 32, 32)
-    >>> model = RetNeXt(3, 100, max_global_pool=False)
+    >>> model = RetNeXt(3, 100, avg_global_pool=True)
 
     >>> model(x).shape
     torch.Size([8, 100])
@@ -41,20 +41,24 @@ class RetNeXt(nn.Module):
     >>> x = torch.randn(16, 3, 25, 25, 25)
     >>> model(x).shape
     torch.Size([16, 100])
+
+    >>> model = RetNeXt(3, 100, avg_global_pool=False)
+    >>> isinstance(model.backbone[-2], nn.AdaptiveMaxPool3d)
+    True
     """
     def __init__(
             self,
             in_channels: int = 1,
             n_outputs: int = 1,
             *,
-            max_global_pool: bool = True,
+            avg_global_pool: bool = True,
             ):
         super().__init__()
 
-        if max_global_pool:
-            global_pool_layer = nn.AdaptiveMaxPool3d(1)
-        else:
+        if avg_global_pool:
             global_pool_layer = nn.AdaptiveAvgPool3d(1)
+        else:
+            global_pool_layer = nn.AdaptiveMaxPool3d(1)
 
         self.backbone = nn.Sequential(
                 nn.BatchNorm3d(in_channels, affine=False, momentum=None),
