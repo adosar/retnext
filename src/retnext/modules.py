@@ -29,12 +29,14 @@ class RetNeXt(nn.Module):
     Examples
     --------
     >>> x = torch.randn(8, 3, 32, 32, 32)
-    >>> model = RetNeXt(3, 100, avg_global_pool=True)
+    >>> model = RetNeXt(3, 100)
 
     >>> model(x).shape
     torch.Size([8, 100])
     >>> model.backbone(x).shape
     torch.Size([8, 128])
+
+    >>> # Use global average pooling by default.
     >>> isinstance(model.backbone[-2], nn.AdaptiveAvgPool3d)
     True
 
