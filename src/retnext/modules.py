@@ -1,8 +1,6 @@
 r"""
-Add module docstring.
+This module provides PyTorch modules for voxel-based processing.
 """
-
-from importlib.resources import files
 
 import torch
 from torch import nn
@@ -30,7 +28,10 @@ def conv3d_block(in_channels: int, out_channels: int, **kwargs):
 
 class RetNeXt(nn.Module):
     r"""
-    Add docstring and paper later.
+    Architecture from the paper: <Paper>
+
+    * If ``avg_global_pool=True`` use average pooling, else max pooling.
+    * If ``pretrained=True``, use pretrained weights for the backbone.
 
     Examples
     --------
