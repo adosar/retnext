@@ -170,7 +170,7 @@ from aidsorb.datamodules import PCDDataModule as VoxelsDataModule
 from aidsorb.litmodules import PCDLit as VoxelsLit
 from torchvision.transforms.v2 import Compose, RandomChoice
 from retnext.modules import RetNeXt
-from retnext.transforms import AddChannelDim, BoltzmannFactor
+from retnext.transforms import AddChannelDim, BoltzmannFactor, RandomRotate90, RandomReflect, RandomFlip
 
 # For reproducibility
 seed_everything(42, workers=True)
@@ -239,4 +239,5 @@ Add bibtex entry.
 
 ## ⚖️ License
 **RetNeXt** is released under the [GNU General Public License v3.0 only](https://spdx.org/licenses/GPL-3.0-only.html).
+
 
