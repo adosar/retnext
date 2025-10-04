@@ -1,5 +1,6 @@
 ## 🤖 About
 
+
 ## 🚀 Tutorial
 
 Before starting, the following packages must be installed:
@@ -12,6 +13,7 @@ pip install aidsorb>=2.0.0
 
 > [!NOTE]
 > **All examples below assume the use of the pretrained model**. Therefore, the image generation and preprocessing parameters must be configured accordingly.
+
 
 ### 🎨 Generate the energy images
 
@@ -28,9 +30,10 @@ cifs = ['foo.cif', 'bar.cif', ...]
 voxels_from_files(cifs, 'path/to/voxels_data/', grid_size=32, cubic_box=30)
 ```
 
+
 ### ❄️ Use RetNeXt as feature extractor
 
-Energy images are passed through the pretrained model to extract 128-D features, which are then stored as an $N\times128$ matrix in a `.csv` file.
+Energy images are passed through the pretrained model to extract 128-D features, which are then stored as a $N\times128$ matrix in a `.csv` file.
 
 > [!TIP]
 > You can use these features alone or combine them with others features (e.g. structural) to train classical machine learning algorithms (e.g. Random Forest or XGBoost).
@@ -60,7 +63,7 @@ names = [f.removesuffix('.npy') for f in os.listdir('path/to/voxels_data/')]
 transform_x = Compose([AddChannelDim(), BoltzmannFactor()])
 
 # Create the dataset
-dataset = VoxelsDataset(names, path_to_X='path_to_voxels_data, transform_x=transform_x)
+dataset = VoxelsDataset(names, path_to_X='path/to/voxels_data/', transform_x=transform_x)
 
 # Create the dataloader (adjust batch_size and num_workers)
 dataloader = DataLoader(dataset, shuffle=False, drop_last=False, batch_size=256, num_workers=8)
@@ -83,6 +86,7 @@ df = pd.DataFrame(Z.numpy(), index=names)
 df.to_csv(f'emdeddings.csv', index=True, index_label='name')
 ```
 
+
 ### 🔥 Fine-tune RetNeXt
 
 1. Split the data into train, validation and test:
@@ -93,41 +97,10 @@ aidsorb prepare path/to/voxels_data/ --split_ratio='[0.7, 0.15, 0.15]' --seed=42
 
 2. Freeze part of the model and fine-tune it:
 
-```python
-import torch
-from lightning.pytorch import Trainer, seed_everything
-from torchmetrics import R2Score, MeanAbsoluteError, MetricCollection
-from aidsorb.datamodules import PCDDataModule as VoxelsDataModule
-from aidsorb.litmodules import PCDLit as VoxelsLit
-from torchvision.transforms.v2 import Compose, RandomChoice
-from retnext.modules import RetNeXt
-from retnext.transforms import AddChannelDim, BoltzmannFactor
-
-# Freeze parts of the backbone
-model = RetNeXt(pretrained=True)
-model.backbone[:7].requires_grad_(False)
-model.backbone[:7].eval()
-
-# Create the datamodule
-datamodule = ...
-datamodule.setup()
-
-# Create the trainer
-trainer = L.Trainer(...)
-
-# Create the litmodel
-loss = torch.nn.MSELoss()
-
-litmodel = VoxelsLit(model=model, )
-
-
-# Initialize last bias with target mean (optional but recommended)
-train_names = list(datamodule.train_dataset.pcd_names)
-y_train_mean = datamodule.train_dataset.Y.loc[train_names].mean().item()
-torch.nn.init.constant_(model.fc.bias, y_train_mean)
-
-trainer.fit(litmodel, datamodule=datamodule)
-```
+> [!NOTE]
+> **The following example shows how to use the pretrained model for a regression task.**
+> For classification, you only need to adjust the final layer, e.g. `model = RetNeXt(n_outputs=10, pretrained=True)`
+> for a 10-class classification task, and use the proper loss and metrics.
 
 <details>
 <summary>Show RetNeXt architecture</summary>
@@ -176,27 +149,78 @@ RetNeXt(
 ```
 </details>
 
+```python
+import torch
+from lightning.pytorch import Trainer, seed_everything
+from torchmetrics import R2Score, MeanAbsoluteError, MetricCollection
+from aidsorb.datamodules import PCDDataModule as VoxelsDataModule
+from aidsorb.litmodules import PCDLit as VoxelsLit
+from torchvision.transforms.v2 import Compose, RandomChoice
+from retnext.modules import RetNeXt
+from retnext.transforms import AddChannelDim, BoltzmannFactor
+
+# For reproducibility
+seed_everything(42, workers=True)
+
+# Freeze all layers except the last two Conv and output layer
+model = RetNeXt(pretrained=True)
+model.backbone[:7].requires_grad_(False)
+model.backbone[:7].eval()
+
+# Preprocessing and data augmentation transformations
+eval_transform_x = Compose([AddChannelDim(), BoltzmannFactor()])
+train_transform_x = Compose([
+    AddChannelDim(), BoltzmannFactor(),
+    RandomChoice([
+        torch.nn.Identity(),
+        RandomRotate90(),
+        RandomFlip(),
+        RandomReflect()
+        ])
+    ])
+
+# Create the datamodule
+datamodule = VoxelsDataModule(
+    path_to_X='path/to/voxels_data/', path_to_Y='path/to/labels.csv',
+    index_col='id', labels=['adsorption_property'],
+    train_batch_size=32, eval_batch_size=256,
+    train_transform_x, eval_transform_x,
+    shuffle=True, drop_last=True,
+    config_dataloaders=dict(num_workers=8),
+)
+datamodule.setup()
+
+# Configure loss, metrics and optimizer
+criterion = torch.nn.MSELoss()
+metric = MetricCollection(R2Score(), MeanAbsoluteError())
+config_optimizer = dict(name='Adam', hparams=dict(lr=1e-3))  # Adjust the learning rate
+
+# Create the litmodel
+litmodel = VoxelsLit(model, criterion, metric=metric, config_optimizer=config_optimizer)
+
+# Create the trainer
+trainer = L.Trainer(max_epochs=5)
+
+# Initialize last bias with target mean (optional but recommended)
+train_names = list(datamodule.train_dataset.pcd_names)
+y_train_mean = datamodule.train_dataset.Y.loc[train_names].mean().item()
+torch.nn.init.constant_(model.fc.bias, y_train_mean)
+
+# Train and test the model
+trainer.fit(litmodel, datamodule=datamodule)
+trainer.test(litmodel, datamodule=datamodule)
+```
+
+For more details and customization options, refer to the [AIdsorb documentation](https://aidsorb.readthedocs.io).
+
 
 ## 📑 Citing
 If you Please use the following BibTeX entry:
 
 ```bibtex
-@article{Sarikas2024,
-  title = {Gas adsorption meets geometric deep learning: points, set and match},
-  volume = {14},
-  ISSN = {2045-2322},
-  url = {http://dx.doi.org/10.1038/s41598-024-76319-8},
-  DOI = {10.1038/s41598-024-76319-8},
-  number = {1},
-  journal = {Scientific Reports},
-  publisher = {Springer Science and Business Media LLC},
-  author = {Sarikas,  Antonios P. and Gkagkas,  Konstantinos and Froudakis,  George E.},
-  year = {2024},
-  month = nov
-}
+Add bibtex entry.
 ```
+
 
 ## ⚖️ License
 **RetNeXt** is released under the [GNU General Public License v3.0 only](https://spdx.org/licenses/GPL-3.0-only.html).
-
-
