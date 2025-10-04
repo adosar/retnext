@@ -149,6 +149,19 @@ RetNeXt(
 ```
 </details>
 
+<details>
+<summary>Show example <code>labels.csv</code></summary>
+
+```csv
+id,adsorption_property
+sample_001,0.123
+sample_002,0.456
+sample_003,0.789
+sample_004,1.234
+sample_005,0.987
+```
+</details>
+
 ```python
 import torch
 from lightning.pytorch import Trainer, seed_everything
@@ -181,8 +194,10 @@ train_transform_x = Compose([
 
 # Create the datamodule
 datamodule = VoxelsDataModule(
-    path_to_X='path/to/voxels_data/', path_to_Y='path/to/labels.csv',
-    index_col='id', labels=['adsorption_property'],
+    path_to_X='path/to/voxels_data/',
+	path_to_Y='path/to/labels.csv',
+    index_col='id',
+	labels=['adsorption_property'],
     train_batch_size=32, eval_batch_size=256,
     train_transform_x, eval_transform_x,
     shuffle=True, drop_last=True,
@@ -204,7 +219,7 @@ trainer = L.Trainer(max_epochs=5)
 # Initialize last bias with target mean (optional but recommended)
 train_names = list(datamodule.train_dataset.pcd_names)
 y_train_mean = datamodule.train_dataset.Y.loc[train_names].mean().item()
-torch.nn.init.constant_(model.fc.bias, y_train_mean)
+torch.nn.init.constant_(litmodel.model.fc.bias, y_train_mean)
 
 # Train and test the model
 trainer.fit(litmodel, datamodule=datamodule)
@@ -224,3 +239,4 @@ Add bibtex entry.
 
 ## ⚖️ License
 **RetNeXt** is released under the [GNU General Public License v3.0 only](https://spdx.org/licenses/GPL-3.0-only.html).
+
