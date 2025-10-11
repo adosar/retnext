@@ -52,6 +52,7 @@ import os
 
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 from torch.utils.data import DataLoader
 from torch.utils.data._utils.collate import default_collate_fn_map
 from torchvision.transforms.v2 import Compose
@@ -88,7 +89,10 @@ model.eval()
 model.fc = torch.nn.Identity()  # So .forward() returns the embeddings.
 
 # Extract features
-Z = torch.cat([model(x.to(device)) for x, _ in dataloader])
+Z = torch.cat([
+    model(x.to(device))
+    for x, _ in tqdm(dataloader, desc='Generating embeddings')
+])
 
 # Store features in .csv file
 df = pd.DataFrame(Z.numpy(), index=names)
@@ -126,17 +130,24 @@ df.to_csv(f'emdeddings.csv', index=True, index_label='name')
 	# For reproducibility
 	seed_everything(42, workers=True)
 	
-	# Load pretrained weights
-	model = RetNeXt(pretrained=True)
+	# Load pretrained weights and set the number of outputs
+	model = RetNeXt(n_outputs=1, pretrained=True)
 	
+    # Option 1
+	# Linear evaluation (freeze the backbone and train only the output layer)
+	#model.backbone.requires_grad_(False)
+	#model.backbone.eval()
+	
+    # Option 2
 	# Fine-tune the last two conv and output layers
 	model.backbone[:7].requires_grad_(False)
 	model.backbone[:7].eval()
 	
+    # Option 3
 	# Fine-tune all layers (just freeze the first BN which acts as standardizer)
 	#model.backbone[0].requires_grad_(False)
 	#model.backbone[0].eval()
-	
+
 	# Preprocessing and data augmentation transformations
 	eval_transform_x = Compose([AddChannelDim(), BoltzmannFactor()])
 	train_transform_x = Compose([
@@ -253,7 +264,7 @@ For more details and customization options, refer to the [AIdsorb documentation]
 
 
 ## 📑 Citing
-If you Please use the following BibTeX entry:
+If you use RetNeXt in your research, please consider citing the following work:
 
 ```bibtex
 Add bibtex entry.
