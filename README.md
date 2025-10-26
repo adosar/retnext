@@ -48,6 +48,7 @@ Energy images are passed through the pretrained model to extract 128-D features,
 <summary>Show example</summary>
 	
 ```python
+from types import NoneType
 import os
 
 import numpy as np
@@ -95,7 +96,7 @@ Z = torch.cat([
 ])
 
 # Store features in .csv file
-df = pd.DataFrame(Z.numpy(), index=names)
+df = pd.DataFrame(Z.cpu().numpy(), index=names)
 df.to_csv(f'emdeddings.csv', index=True, index_label='name')
 ```
 </details>
@@ -167,7 +168,8 @@ df.to_csv(f'emdeddings.csv', index=True, index_label='name')
 	    index_col='id',
 		labels=['adsorption_property'],
 	    train_batch_size=32, eval_batch_size=256,
-	    train_transform_x, eval_transform_x,
+	    train_transform_x=train_transform_x,
+        eval_transform_x=eval_transform_x,
 	    shuffle=True, drop_last=True,
 	    config_dataloaders=dict(num_workers=8),
 	)
@@ -182,7 +184,7 @@ df.to_csv(f'emdeddings.csv', index=True, index_label='name')
 	litmodel = VoxelsLit(model, criterion, metric=metric, config_optimizer=config_optimizer)
 	
 	# Create the trainer
-	trainer = L.Trainer(max_epochs=5)
+	trainer = Trainer(max_epochs=5)
 	
 	# Initialize last bias with target mean (optional but recommended)
 	train_names = list(datamodule.train_dataset.pcd_names)
@@ -272,5 +274,4 @@ Add bibtex entry.
 
 
 ## ⚖️ License
-**RetNeXt** is released under the [GNU General Public License v3.0 only](https://spdx.org/licenses/GPL-3.0-only.html).
-
+RetNeXt is released under the [GNU General Public License v3.0 only](https://spdx.org/licenses/GPL-3.0-only.html).
