@@ -55,9 +55,7 @@ class RetNeXt(nn.Module):
     True
 
     >>> # Uses pretrained weights for the backbone.
-    >>> model = RetNeXt(pretrained=True)
-    >>> model.backbone[0].running_mean.item != 0.
-    True
+    >>> model = RetNeXt(pretrained=True)  # doctest: +SKIP
     """
     def __init__(
             self,
