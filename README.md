@@ -16,6 +16,7 @@ Before starting, the following packages must be installed:
 
 ```bash
 pip install retnext
+pip install torchvision
 pip install pymoxel>=0.4.0
 pip install aidsorb>=2.0.0
 ```
@@ -174,7 +175,6 @@ df.to_csv(f'emdeddings.csv', index=True, index_label='name')
 	    shuffle=True, drop_last=True,
 	    config_dataloaders=dict(num_workers=8),
 	)
-	datamodule.setup()
 	
 	# Configure loss, metrics and optimizer
 	criterion = torch.nn.MSELoss()
