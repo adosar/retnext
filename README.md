@@ -175,6 +175,7 @@ df.to_csv(f'emdeddings.csv', index=True, index_label='name')
 	    shuffle=True, drop_last=True,
 	    config_dataloaders=dict(num_workers=8),
 	)
+    datamodule.setup()
 	
 	# Configure loss, metrics and optimizer
 	criterion = torch.nn.MSELoss()
