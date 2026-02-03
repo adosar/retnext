@@ -28,7 +28,8 @@ def conv3d_block(in_channels: int, out_channels: int, **kwargs):
 
 class RetNeXt(nn.Module):
     r"""
-    Architecture from the paper: <Paper>
+    Architecture from *RetNeXt: A Pretrained Model for Transfer Learning
+    Across the MOF Adsorption Space*.
 
     * If ``avg_global_pool=True`` use average pooling, else max pooling.
     * If ``pretrained=True``, use pretrained weights for the backbone.
