@@ -4,7 +4,7 @@
 
 * The **model architecture**, a 3D convolutional neural network for voxel-based material representations.
 
-* **Pretrained model** via multi-task learning (**ADD REFERENCE**), enabling effective feature extraction and transfer learning.
+* [**Pretrained model** via multi-task learning](https://doi.org/10.1021/acs.jcim.5c02698), enabling effective feature extraction and transfer learning.
 
 * **Built-in transformations** for preprocessing and data augmentation of 3D energy images.
 
@@ -17,7 +17,7 @@ Before starting, the following packages must be installed:
 ```bash
 pip install retnext
 pip install torchvision
-pip install pymoxel>=0.4.0
+pip install pymoxel>=0.5.0
 pip install aidsorb>=2.0.0
 ```
 
@@ -277,3 +277,4 @@ Add bibtex entry.
 
 ## ⚖️ License
 RetNeXt is released under the [GNU General Public License v3.0 only](https://spdx.org/licenses/GPL-3.0-only.html).
+
