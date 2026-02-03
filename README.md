@@ -10,15 +10,19 @@
 
 The pretrained model can be used as a **feature extractor** or **fine-tuned** for adsorption property prediction.
 
+<p align="center">
+  <img alt="RetNeXt feature maps" src="https://raw.githubusercontent.com/adosar/retnext/master/images/feature_maps.gif" width="80%"/>
+</p>
+
 ## 🚀 Tutorial
 
 Before starting, the following packages must be installed:
 
 ```bash
-pip install retnext
-pip install torchvision
-pip install pymoxel>=0.5.0
-pip install aidsorb>=2.0.0
+pip install retnext          # Model and 3D transformations
+pip install torchvision      # For data augmentation
+pip install pymoxel>=0.5.0   # For image generation
+pip install aidsorb>=2.0.0   # For model training
 ```
 
 > [!NOTE]
@@ -277,4 +281,5 @@ Add bibtex entry.
 
 ## ⚖️ License
 RetNeXt is released under the [GNU General Public License v3.0 only](https://spdx.org/licenses/GPL-3.0-only.html).
+
 
