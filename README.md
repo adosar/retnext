@@ -275,11 +275,22 @@ For more details and customization options, refer to the [AIdsorb documentation]
 If you use RetNeXt in your research, please consider citing the following work:
 
 ```bibtex
-Add bibtex entry.
+@article{Sarikas2026,
+  title = {RetNeXt: A Pretrained Model for Transfer Learning Across the MOF Adsorption Space},
+  ISSN = {1549-960X},
+  url = {http://dx.doi.org/10.1021/acs.jcim.5c02698},
+  DOI = {10.1021/acs.jcim.5c02698},
+  journal = {Journal of Chemical Information and Modeling},
+  publisher = {American Chemical Society (ACS)},
+  author = {Sarikas,  Antonios P. and Gkagkas,  Konstantinos and Froudakis,  George E.},
+  year = {2026},
+  month = feb 
+}
 ```
 
 
 ## ⚖️ License
 RetNeXt is released under the [GNU General Public License v3.0 only](https://spdx.org/licenses/GPL-3.0-only.html).
+
 
 
