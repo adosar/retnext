@@ -11,6 +11,17 @@ from itertools import combinations
 import torch
 
 
+class RandomNoise:
+    r"""
+    Add Gaussian (normal) noise to voxels.
+    """
+    def __init__(self, std):
+        self.std = std
+    def __call__(self, x):
+        noise = torch.randn(x.shape, device=x.device) * self.std
+        return x + noise
+
+
 class RandomRotate90:
     r"""
     Rotate voxels around a randomly chosen axis by 90 degrees.
@@ -119,12 +130,10 @@ class ClipVoxels:
 
     Examples
     --------
-    >>> x = torch.randn(100) * 100
+    >>> x = torch.tensor([-20., 22.])
     >>> out = ClipVoxels(-1, 1)(x)
-    >>> out.min()
-    tensor(-1.)
-    >>> out.max()
-    tensor(1.)
+    >>> out
+    tensor([-1.,  1.])
     """
     def __init__(self, vmin: float, vmax: float):
         self.vmin = vmin
@@ -143,7 +152,29 @@ class BoltzmannFactor:
     >>> BoltzmannFactor()(x)
     tensor([1., 0.])
     """
-    def __init__(self, temperature: float = 298):
+    def __init__(self, temperature: float = 298.):
         self.temperature = temperature
     def __call__(self, x):
         return torch.exp((-1 / self.temperature) * x)
+
+
+class ClipScaleVoxels:
+    r"""
+    Clip and then normalize voxels within ``[-1, 1]``.
+
+    First clips voxels within ``[-value, value]``, then divides the result by
+    ``value``, producing voxels with values in ``[-1, 1]``.
+
+    Examples
+    --------
+    >>> x = torch.tensor([-12., 11.])
+    >>> ClipScaleVoxels(10)(x)
+    tensor([-1.,  1.])
+    """
+    def __init__(self, value: float = 5e3):
+        self.value = abs(value)
+    def __call__(self, x: torch.Tensor) -> torch.Tensor:
+        x_clipped = torch.clamp(x, -self.value, self.value)
+        x_scaled = x_clipped / self.value  # Scale to [-1, 1]
+
+        return x_scaled

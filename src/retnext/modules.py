@@ -60,7 +60,7 @@ class RetNeXt(nn.Module):
     """
     def __init__(
             self,
-            in_channels: int = 1,
+            in_channels: int | None = 1,
             n_outputs: int = 1,
             *,
             avg_global_pool: bool = True,
@@ -86,15 +86,40 @@ class RetNeXt(nn.Module):
                 global_pool_layer,
                 nn.Flatten()
                 )
+        self.head = torch.nn.Identity() if n_outputs is None else nn.Linear(128, n_outputs)
 
         if pretrained:
             self.backbone.load_state_dict(self.get_pretrained_weights())
 
-        self.fc = torch.nn.Linear(128, n_outputs)
-
     def forward(self, x):
-        return self.fc(self.backbone(x))
+        return self.head(self.backbone(x))
 
     def get_pretrained_weights(self):
         url = 'https://raw.githubusercontent.com/adosar/retnext-paper/master/pretrained_weights/retnext_cubic_boltzmann_final_all.pt'
         return torch.hub.load_state_dict_from_url(url)
+
+
+class IntelliPore(nn.Module):
+    r"""Backbone for multi-task, multi-domain pretraining on porous materials."""
+    def __init__(
+            self,
+            in_channels: int = 1,
+            n_outputs: int | None = None,
+            ):
+        super().__init__()
+        self.backbone = nn.Sequential(
+                conv3d_block(in_channels, 32, kernel_size=3, padding='same'),
+                conv3d_block(32, 32, kernel_size=3, padding='same'),
+                nn.MaxPool3d(kernel_size=2), # 1st pooling layer
+                conv3d_block(32, 64, kernel_size=3, padding='same'),
+                conv3d_block(64, 64, kernel_size=3, padding='same'),
+                nn.MaxPool3d(kernel_size=2),  # 2nd pooling layer
+                conv3d_block(64, 128, kernel_size=3),
+                conv3d_block(128, 128, kernel_size=3),
+                nn.AdaptiveAvgPool3d(1),
+                nn.Flatten()
+                )
+        self.head = torch.nn.Identity() if n_outputs is None else nn.Linear(128, n_outputs)
+
+    def forward(self, x):
+        return self.head(self.backbone(x))
