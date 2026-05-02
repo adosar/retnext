@@ -103,7 +103,7 @@ Z = torch.cat([
 
 # Store features in .csv file
 df = pd.DataFrame(Z.cpu().numpy(), index=names)
-df.to_csv(f'emdeddings.csv', index=True, index_label='name')
+df.to_csv(f'embeddings.csv', index=True, index_label='name')
 ```
 </details>
 
@@ -291,6 +291,3 @@ If you use RetNeXt in your research, please consider citing the following work:
 
 ## ⚖️ License
 RetNeXt is released under the [GNU General Public License v3.0 only](https://spdx.org/licenses/GPL-3.0-only.html).
-
-
-
