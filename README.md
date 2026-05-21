@@ -1,6 +1,6 @@
 ## 🤖 About
 
-**RetNeXt** is a Python package for **deep learning on 3D energy images of porous materials**. It provides:
+**RetNeXt** is a pretrained model for transfer learning across the MOF adsorption sapce. This package provides:
 
 * The **model architecture**, a 3D convolutional neural network for voxel-based material representations.
 

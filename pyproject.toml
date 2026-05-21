@@ -15,7 +15,7 @@ authors = [
 ]
 license = "GPL-3.0-only"
 
-description = "A lightweight package for deep learning on 3D energy images of porous materials"
+description = "A pretrained model for transfer learning across the MOF adsorption sapce"
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [
