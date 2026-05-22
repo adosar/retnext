@@ -1,6 +1,6 @@
 ## 🤖 About
 
-**RetNeXt** is a pretrained model for transfer learning across the MOF adsorption sapce. This package provides:
+**RetNeXt** is a pretrained model for transfer learning across the MOF adsorption space. This package provides:
 
 * The **model architecture**, a 3D convolutional neural network for voxel-based material representations.
 
