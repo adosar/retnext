@@ -1,7 +1,7 @@
 ## 📢 Project Status
 
 > [!IMPORTANT]
-> **RetNeXt is now part of the AIdsorb project!**
+> **RetNeXt is now part of the AIdsorb package!**
 >
 > AIdsorb is the primary package for deep learning on porous materials and is where future development will take place.
 > It includes RetNeXt together with training, fine-tuning, evaluation, inference, and data processing utilities.
