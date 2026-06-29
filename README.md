@@ -1,3 +1,17 @@
+## 📢 Project Status
+
+> [!IMPORTANT]
+> **RetNeXt is now part of the AIdsorb project!**
+>
+> AIdsorb is the primary package for deep learning on porous materials and is where future development will take place.
+> It includes RetNeXt together with training, fine-tuning, evaluation, inference, and data processing utilities.
+>
+> **We recommend using AIdsorb for all new projects.**
+>
+> 📦 Source code: https://github.com/adosar/aidsorb
+>
+> 📖 Documentation: https://aidsorb.readthedocs.io/en/latest/
+
 ## 🤖 About
 
 **RetNeXt** is a pretrained model for transfer learning across the MOF adsorption space. This package provides:
