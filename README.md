@@ -36,7 +36,7 @@ Before starting, the following packages must be installed:
 pip install retnext          # Model and 3D transformations
 pip install torchvision      # For data augmentation
 pip install pymoxel>=0.5.0   # For image generation
-pip install aidsorb>=2.0.0   # For model training
+pip install aidsorb==2.0.0   # For model training
 ```
 
 > [!NOTE]
