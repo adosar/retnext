@@ -286,7 +286,7 @@ For more details and customization options, refer to the [AIdsorb documentation]
 
 
 ## 📑 Citing
-If you use RetNeXt in your research, please consider citing the following work:
+If you use RetNeXt in your research, please cite the following work:
 
 ```bibtex
 @article{Sarikas2026,
